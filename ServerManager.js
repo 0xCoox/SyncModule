@@ -52,6 +52,9 @@ export default class ServerManager {
 					case SCOPES.SYSTEM:
 						this.#instancesRegistry.input( payload );
 						break;
+					case SCOPES.INSTANCE:
+						this.#onInstanceMessage( senderUUID, payload );
+						break;
 					case SCOPES.MODULE:
 						// console.log(payload)
 						this.#onModuleMessage( senderUUID, payload );
@@ -80,6 +83,18 @@ export default class ServerManager {
 		return JSON.stringify( messageData );
 	}
 
+	#onInstanceMessage ( senderUUID, payload ) {
+    const instance = this.#instancesRegistry.userInstance( senderUUID );
+    if ( instance !== undefined ) {
+        console.log(`routing INSTANCE command to instance ${ instance.UUID }`);
+        
+        // Envoyer à tous les users de l'instance (sauf l'expéditeur)
+        const message = this.#createMessage( SCOPES.INSTANCE, payload, senderUUID );
+        const targetUUIDs = instance.users.filter( uuid => uuid !== senderUUID );
+        this.#broadcastFn( targetUUIDs, message );
+    	}
+	}
+	
 	#onModuleMessage ( senderUUID, payload ) {
 		// console.log(senderUUID, payload)
 
