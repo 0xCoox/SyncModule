@@ -1,5 +1,7 @@
 import ModulesRegistry from "./SyncModules/Core/ModulesRegistry.js";
 
+const COMMANDES_FRONT = new Set(["changeMesh", "flipEyes", "changePointSize", "changeClippingHeight"]);
+
 export default class Instance {
     #UUID;
     #usersUUID = new Set();
@@ -49,25 +51,23 @@ export default class Instance {
         
         console.log( moduleUUID, command );
 
-        //On intercepte nos commandes personnalisées AVANT d'interroger le module
-        if (command === "changeMesh" || command === "flipEyes" || command === "changePointSize"){
-            console.log(`[Intercepteur] Commande front-end détectée (${command}). Rediffusion directe !`);
-            
-            const messageAEnvoyer = {
-                scope: "MODULE",
-                payload: {
-                    command: command,
-                    data: data
-                }
-            };
-            
-            // liste avec la télécommande (users) et le CAVE 
-            const destinataires = [ ...this.users, moduleUUID ];
-            
-            // on envoit a tout le monde 
-            this.output( destinataires, JSON.stringify(messageAEnvoyer) );
-            return; 
-        }
+		if (COMMANDES_FRONT.has(command)) {
+			console.log(`[Intercepteur] Commande front-end détectée (${command}). Rediffusion directe !`);
+			
+			const messageAEnvoyer = {
+				scope: "MODULE",
+				payload: {
+					command: command,
+					data: data
+				}
+			};
+			
+			const destinataires = [ ...this.users, moduleUUID ];
+			
+			// On filtre les UUIDs qui ne sont pas enregistrés côté serveur
+			this.output( destinataires, JSON.stringify(messageAEnvoyer) );
+			return; 
+		}
 
         const targetModule = this.#moduleRegistry.getModule( moduleUUID );
         
