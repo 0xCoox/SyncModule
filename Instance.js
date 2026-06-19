@@ -1,6 +1,13 @@
 import ModulesRegistry from "./SyncModules/Core/ModulesRegistry.js";
 
-const COMMANDES_FRONT = new Set(["changeMesh", "flipEyes", "changePointSize", "changeClippingHeight"]);
+const COMMANDES_FRONT = new Set([
+    "changeMesh", 
+    "flipEyes", 
+    "changePointSize", 
+    "changeClippingHeight", 
+    "moveTree",         
+    "moveTreeDepth"    
+]);
 
 export default class Instance {
     #UUID;
