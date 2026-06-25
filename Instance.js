@@ -6,9 +6,9 @@ const COMMANDES_FRONT = new Set([
     "changePointSize", 
     "changeClippingHeight", 
     "moveTree",         
-    "moveTreeDepth"    
+    "moveTreeDepth",
+    "toggleAutoRotate" 
 ]);
-
 export default class Instance {
     #UUID;
     #usersUUID = new Set();
